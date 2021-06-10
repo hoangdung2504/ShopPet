@@ -13,4 +13,8 @@
     <ProjectReference Include="..\..\Web_2021_API\Web_2021_API\Web_2021_API\Web_2021_API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="testgit\" />
+  </ItemGroup>
+
 </Project>
