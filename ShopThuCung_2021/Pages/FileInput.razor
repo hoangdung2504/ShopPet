@@ -1,0 +1,29 @@
+﻿@page "/fileinput"
+@using ShopThuCung_2021.Service
+@inject IFileUpload fileUpload
+<h3>FileInput</h3>
+
+<InputFile OnChange="SelectFile"></InputFile>
+@if (file != null)
+{
+    <img src="@path" />
+    <br />
+
+    <p>name:@file.Name</p>
+    <p>Size in bytes : @file.Size</p>
+    <p>File type : @file.Type</p>
+}
+@code {
+    IFileListEntry file;
+    string path = "";
+    public async Task SelectFile(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            await fileUpload.UpLoadAsync(file);
+            path = "/Upload/" + file.Name;
+        }
+    }
+
+}

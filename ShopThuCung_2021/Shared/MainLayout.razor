@@ -1,0 +1,73 @@
+﻿@inherits LayoutComponentBase
+@using ShopThuCung_2021.Data
+@inject ShopThuCung_2021.Data.Session session
+@inject NavigationManager nv
+@inject IJSRuntime JS;
+
+  <div style="background-image: url('/Upload/ảnh_nền.jpg')" class="wrapper">
+        <!-- Navbar -->
+        <NavMenu></NavMenu>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        @if (check_quyen)
+        {
+            <LeftMenu></LeftMenu>
+        }
+
+
+        <!-- Content Wrapper. Contains page content -->
+        <div style="background-image: url('/Upload/ảnh_nền.jpg')" class="content-wrapper">
+            <div class="content">
+                <div class="container-fluid">
+                    @Body
+                </div>
+            </div>
+        </div>
+
+        <aside class="control-sidebar control-sidebar-dark">
+        </aside>
+        <footer style="margin-top:4rem;" class="main-footer">
+            <strong>Copyright &copy; 2021 <a>BlogTruyen</a></strong>
+
+            <div class="float-right d-none d-sm-inline-block">
+                <b>Version</b> 1.0.1
+            </div>
+        </footer>
+    </div>
+
+@code{
+
+
+
+    bool check_quyen = false;
+    string quyen = "";
+    string stt = "";
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+
+            quyen = await session.Get_Quyen();
+            stt = await session.Get_Status();
+            if(stt == "C")
+            {
+                JS.InvokeAsync<string>("alert", "Tài khoản đã bị khoá");
+                await session.ClearSS();
+                nv.NavigateTo("/login");
+            }
+
+
+            if (quyen == "Admin")
+            {
+                check_quyen = true;
+            }
+
+
+            StateHasChanged();
+        }
+    }
+
+}

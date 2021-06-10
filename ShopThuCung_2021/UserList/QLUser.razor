@@ -1,0 +1,82 @@
+﻿@page "/qluser"
+@using Web_2021_API.Model
+@using Web_2021_API.Entities
+@using ShopThuCung_2021.Data
+@inject ShopThuCung_2021.Data.CUD_User cud_user
+@inject NavigationManager nav
+@using ShopThuCung_2021.Pages
+<style scoped>
+    .listUser{
+        background-color:#fff;
+        margin-top:20px;
+        height:auto;
+    }
+</style>
+
+<div class="listUser">
+    @if (check)
+    {
+        <Radzen.Blazor.RadzenDataGrid AllowColumnResize="true" FilterMode="Radzen.FilterMode.Advanced" PageSize="10" AllowPaging="true" AllowSorting="true" Data="@usl" TItem="User" ColumnWidth="200px" LogicalFilterOperator="Radzen.LogicalFilterOperator.Or">
+            <Columns>
+                @*<Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="EmployeeID" Filterable="false" Title="ID" Frozen="true" Width="50px" TextAlign="TextAlign.Center" />*@
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Title="Photo" Sortable="false" Filterable="false" Width="80px" TextAlign="Radzen.TextAlign.Center">
+                    <Template Context="data">
+                        <Radzen.Blazor.RadzenImage Path="@data.Path_img" style="width: 60px; height: 60px; border-radius: 50%;" />
+                    </Template>
+                </Radzen.Blazor.RadzenDataGridColumn>
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="TenDangNhap" Title="Tài khoản" Width="100px" TextAlign="Radzen.TextAlign.Center" />
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="HoTen" Title="Họ tên" Width="160px" TextAlign="Radzen.TextAlign.Center" />
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="MatKhau" Title="Mật khẩu" Width="120px" TextAlign="Radzen.TextAlign.Center" />
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="Quyen.Txt_Quyen" Title="Quyền" Width="70px" TextAlign="Radzen.TextAlign.Center" />
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="NgayTao" Title="Ngày Tạo" FormatString="{0:d}" Width="100px" TextAlign="Radzen.TextAlign.Center" />
+                @*<Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="SoLanDangNhapFail" Title="Số lần đăng nhập sai" Width="150px"TextAlign="Radzen.TextAlign.Center" />*@
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="SDT" Title="SĐT" Width="120px" TextAlign="Radzen.TextAlign.Center" />
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="Email" Title="Email" Width="160px" TextAlign="Radzen.TextAlign.Center" />
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Property="Status" Title="Status" Width="70px" TextAlign="Radzen.TextAlign.Center" />
+
+                <Radzen.Blazor.RadzenDataGridColumn TItem="User" Context="data" Width="70px" TextAlign="Radzen.TextAlign.Center">
+                    <Template Context="order">
+                        <Radzen.Blazor.RadzenButton Icon="search" Size="Radzen.ButtonSize.Small" Click="@(args => Select_Item(order.TenDangNhap))">
+                        </Radzen.Blazor.RadzenButton>
+                    </Template>
+                </Radzen.Blazor.RadzenDataGridColumn>
+            </Columns>
+        </Radzen.Blazor.RadzenDataGrid>
+    }
+
+
+    @if (!check)
+    {
+        <button type="button" @onclick="Close_modal" class="close cs_btn_close" style="background-color: aquamarine !important; width: 45px; height: 45px;" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <Profile usl_prm="@ul"></Profile>
+    }
+
+
+
+</div>
+@code{
+    string txt_quyen = "";
+    bool check = true;
+    public User_List ul = new User_List();
+    public User us = new User();
+    IEnumerable<User> usl;
+    protected override async Task OnInitializedAsync()
+    {
+        ul = await cud_user.Get_User("ALL");
+        usl = ul.users;
+        
+        
+    }
+    async Task Select_Item(string id)
+    {
+        ul = await cud_user.Get_User(id);
+        check = false;
+    }
+    void Close_modal()
+    {
+
+        check = true;
+    }
+}

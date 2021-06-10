@@ -1,0 +1,108 @@
+﻿@inherits LayoutComponentBase
+@using ShopThuCung_2021.Data
+@inject ShopThuCung_2021.Data.Session session
+@inject NavigationManager nv
+
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/home" class="brand-link">
+        <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">Blog Truyện</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      
+
+        <!-- SidebarSearch Form -->
+        <div class="form-inline">
+            <div class="input-group" data-widget="sidebar-search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+
+
+
+            <Radzen.Blazor.RadzenCard Style="padding:0 0;background-color:none">
+                <Radzen.Blazor.RadzenPanelMenu>
+                    @if (check_quyen)
+                    {
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="QL User(admin)" Icon="home">
+                            <Radzen.Blazor.RadzenPanelMenuItem Text="Danh sách user" Path="qluser" Icon="account_circle"></Radzen.Blazor.RadzenPanelMenuItem>
+                            <Radzen.Blazor.RadzenPanelMenuItem Text="Đăng bài" Path="baiviet" Icon="line_weight"></Radzen.Blazor.RadzenPanelMenuItem>
+                            <Radzen.Blazor.RadzenPanelMenuItem Text="UpLoad ảnh" Path="fileinput" Icon="attach_file"></Radzen.Blazor.RadzenPanelMenuItem>
+                            <Radzen.Blazor.RadzenPanelMenuItem Text="Dialog" Path="dialog" Icon="perm_media"></Radzen.Blazor.RadzenPanelMenuItem>
+                            <Radzen.Blazor.RadzenPanelMenuItem Text="Notification" Path="notification" Icon="announcement"></Radzen.Blazor.RadzenPanelMenuItem>
+                        </Radzen.Blazor.RadzenPanelMenuItem>
+                    }
+
+                    <Radzen.Blazor.RadzenPanelMenuItem Text="Inputs" Icon="payment">
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="CheckBox" Path="checkbox" Icon="check_circle"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="TextBox" Path="textbox" Icon="input"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="TextArea" Path="textarea" Icon="description"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="Password" Path="password" Icon="payment"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="Numeric" Path="numeric" Icon="aspect_ratio"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="DatePicker" Path="datepicker" Icon="date_range"></Radzen.Blazor.RadzenPanelMenuItem>
+                    </Radzen.Blazor.RadzenPanelMenuItem>
+                    <Radzen.Blazor.RadzenPanelMenuItem Text="Data" Icon="save">
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="DataGrid" Path="datagrid" Icon="grid_on"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="DataList" Path="datalist" Icon="list"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="DropDown" Path="dropdown" Icon="dns"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="DropDownDataGrid" Path="dropdown-datagrid" Icon="receipt"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="ListBox" Path="listbox" Icon="view_list"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="TemplateForm" Path="templateform" Icon="line_style"></Radzen.Blazor.RadzenPanelMenuItem>
+                    </Radzen.Blazor.RadzenPanelMenuItem>
+                    <Radzen.Blazor.RadzenPanelMenuItem Text="Containers" Icon="account_box">
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="Tabs" Path="tabs" Icon="tab"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="Panel" Path="panel" Icon="content_paste"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="Fieldset" Path="fieldset" Icon="account_balance_wallet"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="Card" Path="card" Icon="line_style"></Radzen.Blazor.RadzenPanelMenuItem>
+                    </Radzen.Blazor.RadzenPanelMenuItem>
+                    <Radzen.Blazor.RadzenPanelMenuItem Text="More">
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="Item1"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="Item2"></Radzen.Blazor.RadzenPanelMenuItem>
+                        <Radzen.Blazor.RadzenPanelMenuItem Text="More items">
+                            <Radzen.Blazor.RadzenPanelMenuItem Text="More sub items">
+                                <Radzen.Blazor.RadzenPanelMenuItem Text="Item1"></Radzen.Blazor.RadzenPanelMenuItem>
+                                <Radzen.Blazor.RadzenPanelMenuItem Text="Item2"></Radzen.Blazor.RadzenPanelMenuItem>
+                            </Radzen.Blazor.RadzenPanelMenuItem>
+                        </Radzen.Blazor.RadzenPanelMenuItem>
+                    </Radzen.Blazor.RadzenPanelMenuItem>
+                </Radzen.Blazor.RadzenPanelMenu>
+            </Radzen.Blazor.RadzenCard>
+
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>
+@code{
+
+
+    bool check_quyen = false;
+    string quyen = "";
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+       
+
+            quyen = await session.Get_Quyen();
+
+            if (quyen == "Admin")
+            {
+                check_quyen = true;
+            }
+
+    }
+        
+}

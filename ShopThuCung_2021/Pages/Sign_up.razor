@@ -1,0 +1,106 @@
+﻿@layout LoginLayout
+@page "/signup"
+@inject NavigationManager nav;
+@inject IJSRuntime JS;
+@using Web_2021_API.Model
+@using Newtonsoft.Json
+@using ShopThuCung_2021.Data
+@inject ShopThuCung_2021.Data.Session session
+@inject ShopThuCung_2021.Data.CUD_User cud_user
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/Login/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="Login/css/owl.carousel.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="Login/css/bootstrap.min.css">
+
+    <!-- Style -->
+    <link rel="stylesheet" href="Login/css/style.css">
+
+    <style>
+        input[type=text], input[type=password], input[type=email] {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 15px 0;
+            display: inline-block;
+            border: none;
+            background: #f1f1f1;
+        }
+
+            input[type=text]:focus, input[type=password]:focus {
+                background-color: #ddd;
+                outline: none;
+            }
+    </style>
+    <Microsoft.AspNetCore.Components.Forms.EditForm Model="@exampleModel">
+
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="Login/images/undraw_remotely_2j6y.svg" alt="Image" class="img-fluid">
+                    </div>
+                    <div class="col-md-6 contents">
+                        <div class="mb-4">
+                            <h3>Đăng kí</h3>
+                            <p>Vui lòng điền đầy đủ tất cả các trường</p>
+                        </div>
+                        <div class="row justify-content-center">
+                            <input @bind="user_name" placeholder="Tài khoản" type="text" />
+                            <input @bind="pass_word" placeholder="Mật Khẩu" type="password" />
+
+                            <input @bind="F_pass" placeholder="Nhập lại mật khẩu" type="password" />
+                            <input @bind="f_name" placeholder="Họ tên" type="text" />
+
+                            <input @bind="sdt" placeholder="Số điện thoại" type="text" />
+
+                            <input @bind="Email" placeholder="Email" type="email" />
+
+                        </div>
+                        <input type="submit" @onclick="SingUp" value="Đăng kí" class="btn btn-block btn-primary">
+                        <a href="/">Bạn đã có tài khoản?</a>
+                    </div>
+
+                </div>
+                
+            </div>
+        </div>
+
+
+
+
+    </Microsoft.AspNetCore.Components.Forms.EditForm>
+    @code{
+        string user_name = "";
+        string pass_word = "";
+        string F_pass = "";
+        string Email = "";
+        string f_name = "";
+        string sdt = "";       
+        string img = "/IMG_1/bussiness-man.png";
+        private User_Model exampleModel = new User_Model();
+
+        protected async Task SingUp()
+        {
+            if (pass_word != F_pass)
+            {
+                await JS.InvokeAsync<string>("alert", "Nhập lại mật khẩu sai");
+            }
+            else
+            {
+                User_List user = await cud_user.Create_User(user_name, pass_word, Email, f_name,sdt,img);
+                if (user.res_code == "000")
+                {
+                    await JS.InvokeAsync<string>("alert", "Đăng kí thành công");
+
+                }
+                else
+                {
+                    await JS.InvokeAsync<string>("Err_Dangki", user.res_code);
+                }
+            }
+
+        }
+    }

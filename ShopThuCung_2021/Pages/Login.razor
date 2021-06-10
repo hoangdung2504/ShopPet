@@ -1,0 +1,139 @@
+﻿@layout LoginLayout
+@page "/login"
+@inject NavigationManager nav;
+@inject IJSRuntime JS;
+@using Web_2021_API.Model
+@using Web_2021_API.Entities
+@using Newtonsoft.Json
+@using ShopThuCung_2021.Data
+@inject ShopThuCung_2021.Data.Session session
+@inject ShopThuCung_2021.Data.CUD_User cud_user
+
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/Login/fonts/icomoon/style.css">
+<link rel="stylesheet" href="Login/css/owl.carousel.min.css">
+<link rel="stylesheet" href="Login/css/bootstrap.min.css">
+<link rel="stylesheet" href="Login/css/style.css">
+<Microsoft.AspNetCore.Components.Forms.EditForm Model="@exampleModel">
+
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="Login/images/undraw_remotely_2j6y.svg" alt="Image" class="img-fluid">
+                </div>
+                <div class="col-md-6 contents">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="mb-4">
+                                <h3>Đăng nhập</h3>
+                                <p class="mb-4">Shop thú cưng hàng đầu việt nam</p>
+                            </div>
+                           <a href="/"><span class="icon-home d-block text-left my-4 text-muted"> Truy cập ẩn danh?</span></a> 
+                            <div class="form-group first">
+
+                                <input @bind="user_name" placeholder="Tài khoản" type="text" class="form-control" id="username">
+
+                            </div>
+                            <div class="form-group last mb-4">
+
+                                <input @bind="pass_word" placeholder="Mật khẩu" type="password" class="form-control" id="password">
+
+                            </div>
+
+                            <div class="d-flex mb-5 align-items-center">
+                                <label class="control control--checkbox mb-0">
+                                    <span class="caption">Ghi nhớ tôi</span>
+                                    <input type="checkbox" checked="checked" />
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <span class="ml-auto"><a href="/signup" class="forgot-pass">Chưa có tài khoản?</a></span>
+                            </div>
+
+                            <input @onclick="Login1" type="submit" value="Đăng nhập" class="btn btn-block btn-primary">
+
+                            <span class="d-block text-left my-4 text-muted">&mdash; Đăng nhập với &mdash;</span>
+
+                            <div class="social-login">
+                                <a class="facebook">
+                                    <span class="icon-facebook mr-3"></span>
+                                </a>
+                                <a class="twitter">
+                                    <span class="icon-twitter mr-3"></span>
+                                </a>
+                                <a class="google">
+                                    <span class="icon-google mr-3"></span>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</Microsoft.AspNetCore.Components.Forms.EditForm>
+    @code{
+        string user_name = "";
+        string pass_word = "";
+        string F_pass = "";
+        string Email = "";
+        string f_name = "";
+        private User_Model exampleModel = new User_Model();
+
+        [Parameter] public User_Model CreateTranfer { get; set; }
+        public async Task Login1()
+        {
+            User_List user = await LoginUser(user_name, pass_word);
+            if (user.res_code == "000")
+            {
+                
+                await session.Set_all(user_name, user.users[0].Quyen.Ten_Quyen, user.users[0].HoTen, user.users[0].Path_img, user.users[0].Status);               
+                nav.NavigateTo("/", true);
+
+            }
+            else
+            {
+                await JS.InvokeAsync<string>("Err_login", user.res_code);
+
+            }
+        }
+
+
+        public async Task<User_List> LoginUser(string username, string password)
+        {
+            User_List usl = new User_List();
+            User u = new User();
+            u.TenDangNhap = username;
+            u.MatKhau = password;
+            // string Encrypt_pass = Utils.encrypt((username + password));
+            // usr.usr_password = Encrypt_pass;
+            try
+            {
+                HttpResponseMessage res = await Startup.Send_API("login/login", u, "POST", "");
+                if (res.IsSuccessStatusCode)
+                {
+                    var results = res.Content.ReadAsStringAsync().Result;
+                    usl = JsonConvert.DeserializeObject<User_List>(results);
+                    if (usl.res_code == "000")
+                    {
+                        usl.desc = "Đăng nhập thành công!";
+                        nav.NavigateTo("/");
+                        //this.Login_User = username;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                usl.res_code = "005";
+                await JS.InvokeAsync<string>("alert", ex);
+            }
+            return usl;
+        }
+
+    }

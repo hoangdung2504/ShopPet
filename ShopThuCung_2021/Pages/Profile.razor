@@ -1,0 +1,234 @@
+﻿@page "/profile"
+@using ShopThuCung_2021.Data
+@inject ShopThuCung_2021.Data.CUD_User user
+@inject ShopThuCung_2021.Data.Session sessin
+@inject ShopThuCung_2021.Data._Quyen quyenn
+@using Web_2021_API.Entities
+@using Web_2021_API.Model
+@using ShopThuCung_2021.Service
+@inject IFileUpload fileUpload
+@inject IJSRuntime JS;
+
+
+
+<link href="~/css/profile.css" rel="stylesheet" />
+
+<div class="container rounded bg-white mt-5">
+    <div class="row">
+        <div class="col-md-4 border-right">
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                <img class="rounded-circle" style="width:68%" src="@img">
+                <hr />
+                <h4>Đổi ảnh đại diện</h4>
+                <div>
+                    <InputFile Style="width:30%" OnChange="SelectFile"></InputFile>
+                </div>
+                <span class="font-weight-bold">@fullname</span>
+                <span class="text-black-50">@email</span>
+                <span>Việt nam</span>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="p-3 py-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex flex-row align-items-center back">
+                        <a href="/home"><i class="fa fa-long-arrow-left mr-1 mb-1">Trang chủ</i></a>
+
+                    </div>
+                    <h6 class="text-right">Chỉnh sửa Hồ Sơ</h6>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6"><p>Tài khoản</p><input @bind="tendangnhap" type="text" class="form-control" placeholder="Tên đăng nhập" disabled="disabled"></div>
+                    <div class="col-md-6"><p>Họ tên</p><input @bind="fullname" type="text" class="form-control" placeholder="Tên đầy đủ"></div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6"><p>Email</p><input @bind="email" type="text" class="form-control" placeholder="Email"></div>
+                    <div class="col-md-6"><p>Số điện thoại</p><input @bind="sdt" type="text" class="form-control" placeholder="SĐT"></div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6"><p>Ngày tạo</p><input @bind="ngaytao" type="date" class="form-control" disabled="disabled" placeholder="Ngày tạo"></div>
+                    <div class="col-md-6"><p>Mật khẩu</p><input @bind="pass" type="text" class="form-control" placeholder="Mật khẩu"></div>
+                </div>
+                @if (quyen_ss == "Admin")
+                {
+                    <div class="row mt-3">
+
+                        <div class="col-md-6">
+                            <p>Quyền</p><Radzen.Blazor.RadzenDropDown Style="width:100%" AllowClear="true" TValue="string"
+                                                                      Data=@q @bind-Value="quyen"
+                                                                      TextProperty="Txt_Quyen" ValueProperty="Txt_Quyen" Change=@(args => OnChange(args, "DropDown")) />
+                        </div>
+                        <div class="col-md-6"><p>Số lần đăng nhập fail</p><input @bind="solanFail" type="text" class="form-control" placeholder="Số lần fail"></div>
+                    </div>
+                   
+                    <div class="row mt-3">
+                        <div class="col-md-6"><p>Trạng thái</p><Radzen.Blazor.RadzenDropDown Style="width:100%" AllowClear="true" TValue="string"
+                              Data=@data_Stt @bind-Value="status"
+                              TextProperty="stt" ValueProperty="Value" Change=@(args => OnChange1(args, "DropDown")) /></div>
+
+                    </div>
+                }
+
+                <div class="mt-5 text-right"><button class="btn btn-primary profile-button" @onclick="UpdateProfile" type="button">Cập nhật hồ sơ</button></div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    public User_List usl = new User_List();
+    string id = "ALL";
+    string tendangnhap = "";
+    string fullname = "";
+    string email = "";
+    string sdt = "";
+    DateTime ngaytao = new();
+    string pass = "";
+    string img = "";
+    string quyen = "";
+    string quyen_ss = "";
+    int solanFail = 0;
+    string status = "";
+    List<Quyen> q = new List<Quyen>();
+    Lst_quyen lq = new Lst_quyen();
+    [Parameter]
+    public User_List usl_prm { get; set; }
+
+    public class Data_stt
+    {
+        public string stt { get; set; }
+        public string Value { get; set; }
+    }
+
+    List< Data_stt> data_Stt = new List<Data_stt>()
+    {
+        new Data_stt{stt = "Bị khoá",Value = "C"},
+        new Data_stt{stt = "Hoạt động",Value ="A"}
+
+    };
+
+    void OnChange(object value, string name)
+    {
+        if(value != null)
+        {
+            quyen = value.ToString();
+        }
+        else
+        {
+            quyen = "";
+        }
+
+    }
+    void OnChange1(object value, string name)
+    {
+        if (value != null)
+        {
+            status = value.ToString();
+        }
+        else
+        {
+            status = "";
+        }
+
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            quyen_ss = await sessin.Get_Quyen();
+            lq = await quyenn.Get_quyen();
+            q = lq.quyens;
+            if (usl_prm == null)
+            {
+                id = await sessin.Get_LoginUser();
+                usl = await user.Get_User(id);
+
+                tendangnhap = usl.users[0].TenDangNhap;
+                fullname = usl.users[0].HoTen;
+                email = usl.users[0].Email;
+                sdt = usl.users[0].SDT;
+                ngaytao = usl.users[0].NgayTao;
+                pass = usl.users[0].MatKhau;
+                img = usl.users[0].Path_img;
+                quyen = usl.users[0].Quyen.Txt_Quyen;
+                solanFail = usl.users[0].SoLanDangNhapFail;
+                status = usl.users[0].Status;
+            }
+            else
+            {
+
+
+                usl = await user.Get_User(usl_prm.users[0].TenDangNhap);
+
+                tendangnhap = usl.users[0].TenDangNhap;
+                fullname = usl.users[0].HoTen;
+                email = usl.users[0].Email;
+                sdt = usl.users[0].SDT;
+                ngaytao = usl.users[0].NgayTao;
+                pass = usl.users[0].MatKhau;
+                img = usl.users[0].Path_img;
+                quyen = usl.users[0].Quyen.Txt_Quyen;
+                solanFail = usl.users[0].SoLanDangNhapFail;
+                status = usl.users[0].Status;
+            }
+
+            if (img == "" || img == null)
+            {
+                img = "/IMG_1/bussiness-man.png";
+            }
+        }
+        StateHasChanged();
+    }
+    IFileListEntry file;
+
+    public async Task SelectFile(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            await fileUpload.UpLoadAsync(file);
+            img = "/Upload/" + file.Name;
+
+        }
+
+    }
+    private User_Model exampleModel = new User_Model();
+
+
+    protected async Task UpdateProfile()
+    {
+        if (tendangnhap == "" || pass == "" || email=="" || fullname == "" || sdt=="" || quyen == "")
+        {
+            await JS.InvokeAsync<string>("Err_change_profile", pass, tendangnhap, fullname, email, sdt,quyen);
+        }
+        else
+        {
+            if(status == "")
+            {
+                status = await sessin.Get_Status();
+            }
+          
+            User_List user1 = await user.Update_User(tendangnhap, pass, email, fullname, sdt, img,quyen,solanFail,status);
+            if (user1.res_code == "000")
+            {
+                await JS.InvokeAsync<string>("alert", "Cập nhật thành công ");
+                if(tendangnhap ==  await sessin.Get_LoginUser())
+                {
+                    quyen = await sessin.Get_Quyen();
+                    await sessin.Set_all(tendangnhap, quyen, fullname, img, status);
+                }
+            }
+            else
+            {
+                await JS.InvokeAsync<string>("alert", "lỗi");
+            }
+        }
+
+    }
+
+
+}
+
+
